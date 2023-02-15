@@ -3,11 +3,10 @@
 import time
 import copy
 
-print(">>>   Starting process: \n")
-
  
 #-------------------| Inicializando Listas |-------------------
-AD =	[[0.00,94.35,20.95,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00],
+node_map =	[
+[0.00,94.35,20.95,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00],
 [94.35,0.00,0.00,108.5,58.75,58,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00],
 [20.95,0.00,0.00,0.00,0.00,0.00,30.7,113,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00],
 [0.00,108.5,0.00,0.00,63.7,0.00,0.00,0.00,56.35,53.3,0.00,0.00,0.00,0.00,0.00,47.5,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00],
@@ -56,7 +55,7 @@ AD =	[[0.00,94.35,20.95,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0
 [0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,27.7,0.00,0.00,0.00,37.85,0.00,0.00],
 [0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,64.35,42.85,42.9,0.00,0.00],
 ]
-dict = {
+cities = {
 	0:'Barretos',
 	1:'Sao jose do Rio Preto',
 	2:'Colina',
@@ -108,66 +107,63 @@ dict = {
 }
 #-------------------| Definindo funções |-------------------------
  
-def clonaLista(lista):
+def list_duplicator(_list):
 	clone = []
-	for c in lista:
-    	clone.append(c[:])
+	for line in _list: clone.append(line[:])
 	return clone
  
-def menor_rota(origem,destino,mat_adj):
-	global dist_menor_rota
-	global dist_temp_rota
-	global caminho_melhor_rota
+def dijkstra(start_node,stop_node,_node_map):
+	global smaller_route_distance
+	global current_route_distance
+	global smaller_route_step_by_step
     
-	caminho_temp_rota.append(dict[origem])
+	current_route_step_by_step.append(cities[start_node])
     
-	while(sum(mat_adj[origem]) > 0 ):
-    	dist_prox_no = min(numero for numero in mat_adj[origem] if numero != 0)
-    	prox_no = mat_adj[origem].index(dist_prox_no)
-    	mat_adj[prox_no][origem]=0
-    	mat_adj[origem][prox_no]=0
-    	if(dist_temp_rota + dist_prox_no > dist_menor_rota):
-        	continue
-    	dist_temp_rota += dist_prox_no
-    	if( prox_no == destino ):
-        	if(dist_temp_rota < dist_menor_rota):
-            	caminho_temp_rota.append(dict[prox_no])
-            	caminho_melhor_rota = caminho_temp_rota[:]
-            	dist_menor_rota = dist_temp_rota
-            	caminho_temp_rota.pop()
-    	menor_rota(prox_no,destino,clonaLista(mat_adj))
-    	dist_temp_rota -= dist_prox_no
-    	caminho_temp_rota.pop()
+	while(sum(_node_map[start_node]) > 0 ):
+		next_node_distance = min(distance for distance in _node_map[start_node] if distance != 0)
+		next_node = _node_map[start_node].index(next_node_distance)
+		_node_map[next_node][start_node]=0
+		_node_map[start_node][next_node]=0
+		if(current_route_distance + next_node_distance > smaller_route_distance):
+				continue
+		current_route_distance += next_node_distance
+		if( next_node == stop_node ):
+				if(current_route_distance < smaller_route_distance):
+						current_route_step_by_step.append(cities[next_node])
+						smaller_route_step_by_step = current_route_step_by_step[:]
+						smaller_route_distance = current_route_distance
+						current_route_step_by_step.pop()
+		dijkstra(next_node,stop_node,list_duplicator(_node_map))
+		current_route_distance -= next_node_distance
+		current_route_step_by_step.pop()
 
 #--------------------------------------------------------------------------
 #--------------------------------------------------------------------------
 #--------------------------------------------------------------------------
 
-#-------------------| Variável Global |-------------------------
+#-------------------| Global Variables |-------------------------
 #para processo
-caminho_temp_rota = []
-dist_temp_rota = 0
-dist_menor_rota = 1000000
-caminho_melhor_rota = []
-#-------------------|InicioProcessamento|----------------------
+current_route_step_by_step = []
+current_route_distance = 0
+smaller_route_distance = 1000000
+smaller_route_step_by_step = []
 
-origem = 23
-destino = 7
-if (origem in dict and destino in dict):
-	print("\t\tSearching for a better route ...")
-	tempo_inicio = time.clock()
-	menor_rota(origem,destino,clonaLista(AD))
-	tempo_final = time.clock()
+#-------------------| Starting Process |----------------------
 
-	#Mostrando os Resultados
-	print('Melhor rota :')
-	for cidade in caminho_melhor_rota: print('\t',cidade)
-	print('\nDistancia',round(dist_menor_rota,2),' kms')
-	print('Executado em ',round(tempo_final-tempo_inicio,3),' segundos')
+print("Starting process:")
 
+initial_node = 23
+final_node = 7
+if (initial_node in cities and final_node in cities):
+	print(" Searching for a better route ...")
+	dijkstra(initial_node,final_node,list_duplicator(node_map))
 
-print('>>>   Ending process ...')
+	# Showing the results
+	print(' Smaller route :')
+	for node in smaller_route_step_by_step: print('\t',node)
+	print('\n','Distance',round(smaller_route_distance,2),' kms')
 
+print('Ending process ...')
 
 
 
